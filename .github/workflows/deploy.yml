@@ -1,0 +1,38 @@
+name: Deploy to AWS EC2
+
+on:
+  push:
+    branches:
+      - main  # Runs when you push to the main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: SSH into EC2 and Deploy
+      env:
+        SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        EC2_IP: ${{ secrets.EC2_PUBLIC_IP }}
+        AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      run: |
+        echo "$SSH_KEY" | base64 --decode > private_key.pem
+        chmod 600 private_key.pem
+        ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$EC2_IP << EOF
+          # Login to AWS ECR
+          sudo aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com
+
+          # Pull the latest image from ECR
+          sudo docker pull $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/my-app:latest
+
+          # Stop and remove the existing container
+          sudo docker stop my-app || true
+          sudo docker rm my-app || true
+
+          # Run the new container
+          sudo docker run -d -p 3000:3000 --name my-app $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/my-app:latest
+        EOF
+

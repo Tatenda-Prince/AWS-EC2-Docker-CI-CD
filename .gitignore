@@ -1,0 +1,45 @@
+# Ignore Python compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore Terraform files
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+*.tfvars
+*.tfstate.d/
+crash.log
+*.plan
+
+# Ignore AWS credentials
+*.pem
+*.key
+aws_credentials
+.env
+*.secrets
+
+# Ignore Docker files
+*.log
+.dockerignore
+docker-compose.override.yml
+
+# Ignore GitHub Actions runtime files
+.github/*.log
+.github/workflows/*.log
+
+# Ignore IDE/editor files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Ignore Node.js dependencies (if applicable)
+node_modules/
+npm-debug.log
+yarn.lock
+
+# Ignore VS Code settings (optional)
+.vscode/
+
