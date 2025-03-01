@@ -31,7 +31,7 @@ jobs:
           sudo aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com
 
           echo "🔹 Pulling the latest image from ECR..."
-          sudo docker pull $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/my-app:latest
+          sudo docker pull $970547345579.dkr.ecr.us-east-1.amazonaws.com/my-app:latest
 
           echo "🔹 Stopping and removing any existing container..."
           sudo docker stop my-app || true
