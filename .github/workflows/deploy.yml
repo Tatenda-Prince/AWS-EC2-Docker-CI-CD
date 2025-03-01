@@ -3,7 +3,7 @@ name: Deploy to AWS EC2
 on:
   push:
     branches:
-      - master # Runs when you push to the main branch
+      - master  # Runs when you push to the master branch
 
 jobs:
   deploy:
@@ -19,20 +19,29 @@ jobs:
         EC2_IP: ${{ secrets.EC2_PUBLIC_IP }}
         AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
       run: |
+        # Decode and set up SSH key
         echo "$SSH_KEY" | base64 --decode > private_key.pem
-        chmod 600 private_key.pem
-        ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$EC2_IP << EOF
-          # Login to AWS ECR
+        chmod 400 private_key.pem  # Use more secure permissions
+
+        # Connect to EC2 and deploy the container
+        ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$EC2_IP << 'EOF'
+          set -e  # Stop script if any command fails
+
+          echo "🔹 Logging in to AWS ECR..."
           sudo aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com
 
-          # Pull the latest image from ECR
+          echo "🔹 Pulling the latest image from ECR..."
           sudo docker pull $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/my-app:latest
 
-          # Stop and remove the existing container
+          echo "🔹 Stopping and removing any existing container..."
           sudo docker stop my-app || true
           sudo docker rm my-app || true
 
-          # Run the new container
-          sudo docker run -d -p 3000:3000 --name my-app $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/my-app:latest
-        EOF
+          echo "🔹 Removing unused Docker images..."
+          sudo docker system prune -af || true
 
+          echo "🔹 Running the new container..."
+          sudo docker run -d --name my-app -p 3000:3000 $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/my-app:latest
+
+          echo "✅ Deployment complete!"
+        EOF
