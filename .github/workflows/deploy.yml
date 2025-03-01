@@ -18,22 +18,38 @@ jobs:
         SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         EC2_IP: ${{ secrets.EC2_PUBLIC_IP }}
         AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+        AWS_REGION: "us-east-1"  # Change if your region is different
       run: |
         # Decode and set up SSH key
         echo "$SSH_KEY" | base64 --decode > private_key.pem
-        chmod 400 private_key.pem  # Secure SSH key
+        chmod 400 private_key.pem  # Secure the SSH key
 
         # Connect to EC2 and deploy the container
-        ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$EC2_IP << 'EOF'
+        ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$EC2_IP << EOF
           set -e  # Stop script if any command fails
 
+          echo "🔹 Checking AWS CLI installation..."
+          if ! command -v aws &> /dev/null; then
+            echo "❌ AWS CLI not found! Installing..."
+            sudo yum install -y aws-cli
+          fi
+
           echo "🔹 Logging in to AWS ECR..."
-          AWS_ECR_URL="${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com"
-          sudo aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin $AWS_ECR_URL
+          AWS_ECR_URL="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+          echo "Using AWS ECR URL: \$AWS_ECR_URL"
+          
+          # Ensure ECR login is successful
+          if ! sudo aws ecr get-login-password --region ${AWS_REGION} | sudo docker login --username AWS --password-stdin \$AWS_ECR_URL; then
+            echo "❌ Failed to login to AWS ECR!"
+            exit 1
+          fi
 
           echo "🔹 Pulling the latest image from ECR..."
-          IMAGE="$AWS_ECR_URL/my-app:latest"
-          sudo docker pull $IMAGE
+          IMAGE="\$AWS_ECR_URL/my-app:latest"
+          if ! sudo docker pull \$IMAGE; then
+            echo "❌ Failed to pull image from ECR!"
+            exit 1
+          fi
 
           echo "🔹 Stopping and removing any existing container..."
           sudo docker stop my-app || true
@@ -43,7 +59,10 @@ jobs:
           sudo docker system prune -af || true
 
           echo "🔹 Running the new container..."
-          sudo docker run -d --name my-app -p 3000:3000 $IMAGE
+          if ! sudo docker run -d --name my-app -p 3000:3000 \$IMAGE; then
+            echo "❌ Failed to start the container!"
+            exit 1
+          fi
 
           echo "✅ Deployment complete!"
         EOF
