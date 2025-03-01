@@ -6,7 +6,47 @@ on:
       - master  # Runs when you push to the master branch
 
 jobs:
+  build-and-push:
+    name: Build and Push Docker Image to ECR
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Login to AWS ECR
+      env:
+        AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      run: |
+        AWS_ECR_URL="${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com"
+        aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $AWS_ECR_URL
+
+    - name: Build and Tag Docker Image
+      env:
+        AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      run: |
+        AWS_ECR_URL="${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com"
+        IMAGE_TAG="latest"
+        docker build -t my-app .
+        docker tag my-app:latest $AWS_ECR_URL/my-app:$IMAGE_TAG
+
+    - name: Push Docker Image to ECR
+      env:
+        AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      run: |
+        AWS_ECR_URL="${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com"
+        IMAGE_TAG="latest"
+        docker push $AWS_ECR_URL/my-app:$IMAGE_TAG
+
   deploy:
+    needs: build-and-push  # Wait until image is pushed
     runs-on: ubuntu-latest
 
     steps:
@@ -18,51 +58,29 @@ jobs:
         SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         EC2_IP: ${{ secrets.EC2_PUBLIC_IP }}
         AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-        AWS_REGION: "us-east-1"  # Change if your region is different
       run: |
         # Decode and set up SSH key
         echo "$SSH_KEY" | base64 --decode > private_key.pem
-        chmod 400 private_key.pem  # Secure the SSH key
+        chmod 400 private_key.pem
 
         # Connect to EC2 and deploy the container
         ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$EC2_IP << EOF
-          set -e  # Stop script if any command fails
-
-          echo "🔹 Checking AWS CLI installation..."
-          if ! command -v aws &> /dev/null; then
-            echo "❌ AWS CLI not found! Installing..."
-            sudo yum install -y aws-cli
-          fi
+          set -e  
 
           echo "🔹 Logging in to AWS ECR..."
-          AWS_ECR_URL="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
-          echo "Using AWS ECR URL: \$AWS_ECR_URL"
-          
-          # Ensure ECR login is successful
-          if ! sudo aws ecr get-login-password --region ${AWS_REGION} | sudo docker login --username AWS --password-stdin \$AWS_ECR_URL; then
-            echo "❌ Failed to login to AWS ECR!"
-            exit 1
-          fi
+          AWS_ECR_URL="${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com"
+          sudo aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin \$AWS_ECR_URL
 
           echo "🔹 Pulling the latest image from ECR..."
           IMAGE="\$AWS_ECR_URL/my-app:latest"
-          if ! sudo docker pull \$IMAGE; then
-            echo "❌ Failed to pull image from ECR!"
-            exit 1
-          fi
+          sudo docker pull \$IMAGE
 
           echo "🔹 Stopping and removing any existing container..."
           sudo docker stop my-app || true
           sudo docker rm my-app || true
 
-          echo "🔹 Removing unused Docker images..."
-          sudo docker system prune -af || true
-
           echo "🔹 Running the new container..."
-          if ! sudo docker run -d --name my-app -p 3000:3000 \$IMAGE; then
-            echo "❌ Failed to start the container!"
-            exit 1
-          fi
+          sudo docker run -d --name my-app -p 3000:3000 \$IMAGE
 
           echo "✅ Deployment complete!"
         EOF
