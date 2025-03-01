@@ -43,3 +43,6 @@ yarn.lock
 # Ignore VS Code settings (optional)
 .vscode/
 
+.terraform/
+
+
