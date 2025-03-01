@@ -21,6 +21,21 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
+    - name: Ensure ECR Repository Exists
+      env:
+        AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      run: |
+        AWS_ECR_URL="${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com"
+        REPO_NAME="my-app"
+
+        if ! aws ecr describe-repositories --repository-names $REPO_NAME --region us-east-1 > /dev/null 2>&1; then
+          echo "🔹 Repository $REPO_NAME does not exist. Creating it now..."
+          aws ecr create-repository --repository-name $REPO_NAME --region us-east-1
+          echo "✅ Repository created!"
+        else
+          echo "✅ Repository $REPO_NAME already exists."
+        fi
+
     - name: Login to AWS ECR
       env:
         AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
