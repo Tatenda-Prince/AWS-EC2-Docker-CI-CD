@@ -1,9 +1,18 @@
+# Use official Python 3.8 image
 FROM python:3.8
 
+# Set the working directory
 WORKDIR /app
+
+# Copy application files
 COPY app.py .
+COPY requirements.txt .
 
-RUN pip install flask
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
+# Expose port 5000 to match the GitHub Actions workflow
+EXPOSE 5000
+
+# Run the Flask application
 CMD ["python", "app.py"]
-
