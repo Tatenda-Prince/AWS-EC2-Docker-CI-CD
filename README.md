@@ -130,7 +130,7 @@ The process should now conclude with a message indicating “Apply complete”, 
 ## Step 3: Verify creation of our EC2 Instance
 In the AWS Management Console, head to the Amazon EC2 dashboard and verify that the DockerAppServer instance was successfully created with public ip and IAM Role.
 
-![image_alt]()
+![image_alt](https://github.com/Tatenda-Prince/aws-ec2-docker-ci-cd/blob/bf4e8fcb14f0185ce94ce80ab767783e5b1889ca/img/Screenshot%202025-03-02%20094320.png)
 
 
 ## Step 4: Lets Push Code to Trigger GitHub Actions
