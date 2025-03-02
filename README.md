@@ -42,21 +42,19 @@ By integrating Terraform, we ensure a repeatable, scalable, and infrastructure-a
 
 
 ## Technologies Used
+1.AWS EC2 – Hosts the Dockerized application.
 
-AWS EC2 – Hosts the Dockerized application.
+2.AWS ECR – Stores Docker images.
 
-AWS ECR – Stores Docker images.
+3.GitHub Actions – Automates the CI/CD pipeline.
 
-GitHub Actions – Automates the CI/CD pipeline.
+4.Docker – Containerizes the application.
 
-Docker – Containerizes the application.
+5.Terraform – Automates AWS infrastructure setup.
 
-Terraform – Automates AWS infrastructure setup.
-
-Flask – Python web framework for the app.
+6.Flask – Python web framework for the app.
 
 ## Use Case
-
 You work at the Up The Chelsea start-up as a DevOps Engineer you are tasked with automation and deployement of a web app to reduce downtime and improving application reliability to their customers by leveraging GitHub Actions, Docker, EC2 and Terraform. 
 
 ## Prerequisites
@@ -121,21 +119,18 @@ Terraform will initiate the process of applying all the changes to the infrastru
 
 
 ## Success
-
 The process should now conclude with a message indicating “Apply complete”, stating the total number of added, modified, and destroyed resources, accompanied by several resources.
 
 ![image_alt]()
 
 
 ## Step 3: Verify creation of our EC2 Instance
-
 In the AWS Management Console, head to the Amazon EC2 dashboard and verify that the DockerAppServer instance was successfully created with public ip and IAM Role.
 
 ![image_alt]()
 
 
 ## Step 4: Lets Push Code to Trigger GitHub Actions
-
 4.1.This action will trigger GitHub Actions to create ecr , build, push, and deploy the latest container to EC2.
 
 ```language
@@ -148,6 +143,58 @@ git push origin main
 
 
 4.2.Now github actions will build, push, and deploy the latest container to EC2.
+
+
+## Step 5: Testing
+5.1.Verify if the GitHub Actions workflow runs successfully.
+
+![image_alt]()
+
+
+5.2.Verify if the container is running on EC2:
+
+```language
+ssh ec2-user@your-ec2-public-ip
+
+docker ps
+```
+
+![image_alt]()
+
+
+5.3.Access the app using `http://<your-ec2-public-ip>:5000`
+
+open your browser and paste the url above with your your-ec2-public-ip you be able to see the app running.
+
+![image_alt]()
+
+
+## Future Enhancements
+1.Add a Load Balancer (ALB) for high availability.
+
+2.Monitor logs & metrics with AWS CloudWatch.
+
+
+## Congratulations
+We have succesfully created DevOps automation with AWS and GitHub Actions. It ensures continuous deployment of a Dockerized application in a scalable, secure, and efficient manner.It is fully automated, scalable, and production-ready CI/CD pipeline using GitHub Actions, Docker, AWS, and Terraform.It's an excellent example of modern DevOps workflows and best practices. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
