@@ -172,7 +172,7 @@ docker ps
 
 open your browser and paste the url above with your your-ec2-public-ip you be able to see the app running.
 
-![image_alt]()
+![image_alt](https://github.com/Tatenda-Prince/aws-ec2-docker-ci-cd/blob/e99cec4e331e0efde242fbae6e34fcb7bec8bcd0/img/Screenshot%202025-03-02%20095651.png)
 
 
 ## Future Enhancements
