@@ -97,7 +97,7 @@ terraform validate
 
 The command should generate a success message, confirming that it is valid, as demonstrated below.
 
-![image_alt]()
+![image_alt](https://github.com/Tatenda-Prince/aws-ec2-docker-ci-cd/blob/d7a276e477698a5b5963eb28086f9bb9b83d8280/img/Screenshot%202025-03-02%20093551.png)
 
 
 2.4.Let’s now execute the following command to generate a list of all the modifications that Terraform will apply. 
