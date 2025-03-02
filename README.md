@@ -154,7 +154,7 @@ git push origin main
 ![image_alt](https://github.com/Tatenda-Prince/aws-ec2-docker-ci-cd/blob/80920699375494ad0a9980745711cae4acb1d2a1/img/Screenshot%202025-03-02%20095042.png)
 
 
-![image_alt]()
+![image_alt](https://github.com/Tatenda-Prince/aws-ec2-docker-ci-cd/blob/4579fccd84b1c6e93850d096de2013deea793852/img/Screenshot%202025-03-02%20095056.png)
 
 
 5.2.Verify if the container is running on EC2:
