@@ -4,6 +4,11 @@
 ## Technical Architecture
 
 
+![image_alt]()
+
+
+
+
 ## Project Overview
 
 This project implements a fully automated CI/CD pipeline using GitHub Actions, Docker, AWS EC2, and Terraform. Whenever a developer pushes changes to the repository, GitHub Actions:
