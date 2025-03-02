@@ -124,7 +124,7 @@ Terraform will initiate the process of applying all the changes to the infrastru
 ## Success
 The process should now conclude with a message indicating “Apply complete”, stating the total number of added, modified, and destroyed resources, accompanied by several resources.
 
-![image_alt]()
+![image_alt](https://github.com/Tatenda-Prince/aws-ec2-docker-ci-cd/blob/ab5b8088b7a341842e214ffdc398411a08dca686/img/Screenshot%202025-03-02%20094044.png)
 
 
 ## Step 3: Verify creation of our EC2 Instance
