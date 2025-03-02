@@ -86,7 +86,7 @@ terraform init
 ```
 Upon completion of the initialization process, a successful prompt will be displayed, as shown below.
 
-![image_alt]()
+![image_alt](https://github.com/Tatenda-Prince/aws-ec2-docker-ci-cd/blob/a866a5e9895d1a9129ae266ebd8f74177530025a/img/Screenshot%202025-03-02%20093458.png)
 
 
 2.3.Next, let’s ensure that our code does not contain any syntax errors by running the following command 
