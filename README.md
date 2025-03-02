@@ -11,13 +11,13 @@
 
 This project implements a fully automated CI/CD pipeline using GitHub Actions, Docker, AWS EC2, and Terraform. Whenever a developer pushes changes to the repository, GitHub Actions:
 
-Builds a Docker image
+1.Builds a Docker image
 
-Pushes it to Amazon Elastic Container Registry (ECR)
+2.Pushes it to Amazon Elastic Container Registry (ECR)
 
-Deploys the updated container to an AWS EC2 instance
+3.Deploys the updated container to an AWS EC2 instance
 
-Restarts the running container to reflect the latest changes
+4.Restarts the running container to reflect the latest changes
 
 By integrating Terraform, we ensure a repeatable, scalable, and infrastructure-as-code (IaC) approach for provisioning AWS resources.
 
