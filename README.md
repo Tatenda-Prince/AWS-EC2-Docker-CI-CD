@@ -151,7 +151,7 @@ git push origin main
 ## Step 5: Testing
 5.1.Verify if the GitHub Actions workflow runs successfully.
 
-![image_alt]()
+![image_alt](https://github.com/Tatenda-Prince/aws-ec2-docker-ci-cd/blob/80920699375494ad0a9980745711cae4acb1d2a1/img/Screenshot%202025-03-02%20095042.png)
 
 
 ![image_alt]()
