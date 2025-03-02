@@ -142,7 +142,7 @@ git commit -m "Updated Flask app Homepage"
 git push origin main
 ```
 
-![image_alt]()
+![image_alt](https://github.com/Tatenda-Prince/aws-ec2-docker-ci-cd/blob/ae40b2fa2629a8603b7d0bbb8cc0bd14328b8658/img/Screenshot%202025-03-02%20094857.png)
 
 
 4.2.Now github actions will build, push, and deploy the latest container to EC2.
