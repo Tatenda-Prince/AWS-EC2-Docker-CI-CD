@@ -165,7 +165,7 @@ ssh ec2-user@your-ec2-public-ip
 docker ps
 ```
 
-![image_alt]()
+![image_alt](https://github.com/Tatenda-Prince/aws-ec2-docker-ci-cd/blob/b7c28de6f1c540448c4823e3d299434d072b40e5/img/Screenshot%202025-03-02%20095314.png)
 
 
 5.3.Access the app using `http://<your-ec2-public-ip>:5000`
