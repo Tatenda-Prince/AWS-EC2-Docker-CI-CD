@@ -4,9 +4,7 @@
 ## Technical Architecture
 
 
-![image_alt]()
-
-
+![image_alt](https://github.com/Tatenda-Prince/aws-ec2-docker-ci-cd/blob/595eed6bc28aa70ac7c04eb93ae4c44a1f3eda36/img/Screenshot%202025-03-01%20214223.png)
 
 
 ## Project Overview
