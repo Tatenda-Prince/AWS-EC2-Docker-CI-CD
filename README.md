@@ -154,6 +154,9 @@ git push origin main
 ![image_alt]()
 
 
+![image_alt]()
+
+
 5.2.Verify if the container is running on EC2:
 
 ```language
