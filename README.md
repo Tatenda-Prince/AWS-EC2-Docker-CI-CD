@@ -1,1 +1,170 @@
-# Header 1
+# GitHubActions AutoDeploy: Dockerized App Deployment on AWS EC2
+
+
+## Technical Architecture
+
+
+## Project Overview
+
+This project implements a fully automated CI/CD pipeline using GitHub Actions, Docker, AWS EC2, and Terraform. Whenever a developer pushes changes to the repository, GitHub Actions:
+
+Builds a Docker image
+
+Pushes it to Amazon Elastic Container Registry (ECR)
+
+Deploys the updated container to an AWS EC2 instance
+
+Restarts the running container to reflect the latest changes
+
+By integrating Terraform, we ensure a repeatable, scalable, and infrastructure-as-code (IaC) approach for provisioning AWS resources.
+
+## Project Objective
+
+1.Automate application deployment using GitHub Actions & Docker.
+
+2.Ensure reliability with Infrastructure as Code (IaC) via Terraform.
+
+3.Minimize manual intervention by fully automating build, push, and deployment processes.
+
+## Features
+
+1.CI/CD Pipeline: Auto-build & deploy upon code push 
+
+2.Dockerized Deployment: Ensures consistent application runtime 
+
+3.GitHub Actions: Automates the entire workflow
+
+4.AWS ECR: Stores versioned Docker images 
+
+5.AWS EC2 Instance: Hosts & runs the deployed app
+
+6.Terraform: Manages AWS infrastructure as code 
+
+
+## Technologies Used
+
+AWS EC2 – Hosts the Dockerized application.
+
+AWS ECR – Stores Docker images.
+
+GitHub Actions – Automates the CI/CD pipeline.
+
+Docker – Containerizes the application.
+
+Terraform – Automates AWS infrastructure setup.
+
+Flask – Python web framework for the app.
+
+## Use Case
+
+You work at the Up The Chelsea start-up as a DevOps Engineer you are tasked with automation and deployement of a web app to reduce downtime and improving application reliability to their customers by leveraging GitHub Actions, Docker, EC2 and Terraform. 
+
+## Prerequisites
+1.Git & GitHub Account
+
+2.AWS Account with configured IAM roles, EC2, and ECR
+
+3.Terraform & AWS CLI installed (if using Terraform for infrastructure)
+
+4.Docker installed on local machine
+
+## Step 1: Clone the Repository
+1.1.Clone this repository to your local machine.
+
+```language
+git clone https://github.com/Tatenda-Prince/aws-ec2-docker-ci-cd.git
+```
+
+## Step 2 : Run Terraform workflow to initialize, validate, plan then apply
+2.1.We are going to deploy amazon EC2 instance with security groups and with IAM Role using terraform.
+
+2.2.In your local terraform visual code environment terminal, to initialize the necessary providers, execute the following command in your environment terminal.
+
+```language
+terraform init
+```
+Upon completion of the initialization process, a successful prompt will be displayed, as shown below.
+
+![image_alt]()
+
+
+2.3.Next, let’s ensure that our code does not contain any syntax errors by running the following command 
+
+```language
+terraform validate
+```
+
+The command should generate a success message, confirming that it is valid, as demonstrated below.
+
+![image_alt]()
+
+
+2.4.Let’s now execute the following command to generate a list of all the modifications that Terraform will apply. 
+
+```language
+terraform plan
+```
+
+![image_alt]()
+
+The list of changes that Terraform is anticipated to apply to the infrastructure resources should be displayed. The “+” sign indicates what will be added, while the “-” sign indicates what will be removed.
+
+2.5.Now, let’s deploy this infrastructure! Execute the following command to apply the changes and deploy the resources. Note — Make sure to type “yes” to agree to the changes after running this command
+
+```language
+terraform apply
+```
+
+Terraform will initiate the process of applying all the changes to the infrastructure. Kindly wait for a few seconds for the deployment process to complete.
+
+![image_alt]()
+
+
+## Success
+
+The process should now conclude with a message indicating “Apply complete”, stating the total number of added, modified, and destroyed resources, accompanied by several resources.
+
+![image_alt]()
+
+
+## Step 3: Verify creation of our EC2 Instance
+
+In the AWS Management Console, head to the Amazon EC2 dashboard and verify that the DockerAppServer instance was successfully created with public ip and IAM Role.
+
+![image_alt]()
+
+
+## Step 4: Lets Push Code to Trigger GitHub Actions
+
+4.1.This action will trigger GitHub Actions to create ecr , build, push, and deploy the latest container to EC2.
+
+```language
+git add .
+git commit -m "Updated Flask app Homepage"
+git push origin main
+```
+
+![image_alt]()
+
+
+4.2.Now github actions will build, push, and deploy the latest container to EC2.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
