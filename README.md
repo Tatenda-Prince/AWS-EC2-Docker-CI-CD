@@ -1,4 +1,4 @@
-# GitHubActions AutoDeploy: Dockerized App Deployment on AWS EC2
+## GitHubActions AutoDeploy: Dockerized App Deployment on AWS EC2
 
 
 ## Technical Architecture
