@@ -309,7 +309,7 @@ The `env` section within the steps that require AWS credentials pulls the values
 
 4.Add the following secrets:
 
-![image_alt]()
+![image_alt](https://github.com/Tatenda-Prince/AWS-EC2-Docker-CI-CD/blob/53bfb8f558e250dd7993f3db325dcff145fa33e3/img/Screenshot%202025-03-13%20192807.png)
 
 
 
