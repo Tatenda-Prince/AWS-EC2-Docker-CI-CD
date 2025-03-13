@@ -94,7 +94,7 @@ docker push <ECR_URI>:latest
 
 ```
 
-![image_alt]()
+![image_alt](https://github.com/Tatenda-Prince/AWS-EC2-Docker-CI-CD/blob/d232eadb24a3f9562cf77e36c6e08a130acd0f99/img/Screenshot%202025-03-13%20192442.png)
 
 
 
