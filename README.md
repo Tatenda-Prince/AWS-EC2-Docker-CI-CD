@@ -171,7 +171,127 @@ GitHub Actions Workflow:
 
 ```language
 
+name: Deploy to AWS EC2
 
+on:
+  push:
+    branches:
+      - master  # Runs when you push to the master branch
+
+jobs:
+  build-and-push:
+    name: Build and Push Docker Image to ECR
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Ensure ECR Repository Exists
+      env:
+        AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      run: |
+        AWS_ECR_URL="${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com"
+        REPO_NAME="my-app"
+
+        if ! aws ecr describe-repositories --repository-names $REPO_NAME --region us-east-1 > /dev/null 2>&1; then
+          echo "🔹 Repository $REPO_NAME does not exist. Creating it now..."
+          aws ecr create-repository --repository-name $REPO_NAME --region us-east-1
+          echo "✅ Repository created!"
+        else
+          echo "✅ Repository $REPO_NAME already exists."
+        fi
+
+    - name: Login to AWS ECR
+      env:
+        AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      run: |
+        AWS_ECR_URL="${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com"
+        aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $AWS_ECR_URL
+
+    - name: Check if Dockerfile Exists
+      run: |
+        if [ ! -f app/Dockerfile ]; then
+          echo "❌ Dockerfile is missing in ./app!"
+          exit 1
+        else
+          echo "✅ Dockerfile found!"
+        fi
+
+    - name: Build and Tag Docker Image
+      env:
+        AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      run: |
+        AWS_ECR_URL="${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com"
+        IMAGE_TAG="latest"
+        docker build -t my-app -f app/Dockerfile app/.
+        docker tag my-app:latest $AWS_ECR_URL/my-app:$IMAGE_TAG
+
+    - name: Push Docker Image to ECR
+      env:
+        AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      run: |
+        AWS_ECR_URL="${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com"
+        IMAGE_TAG="latest"
+        docker push $AWS_ECR_URL/my-app:$IMAGE_TAG
+
+  deploy:
+    needs: build-and-push  # Wait until the image is pushed
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: SSH into EC2 and Deploy
+      env:
+        SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        EC2_IP: ${{ secrets.EC2_PUBLIC_IP }}
+        AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      run: |
+        # Decode and set up SSH key
+        echo "$SSH_KEY" | base64 --decode > private_key.pem
+        chmod 400 private_key.pem
+
+        # Connect to EC2 and deploy the container
+        ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$EC2_IP << EOF
+          set -e  
+
+          echo "🔹 Logging in to AWS ECR..."
+          AWS_ECR_URL="${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com"
+          sudo aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin \$AWS_ECR_URL
+
+          echo "🔹 Pulling the latest image from ECR..."
+          IMAGE="\$AWS_ECR_URL/my-app:latest"
+          sudo docker pull \$IMAGE
+
+          echo "🔹 Stopping and removing any existing container..."
+          sudo docker stop my-app || true
+          sudo docker rm my-app || true
+
+          echo "🔹 Removing old images..."
+          sudo docker image prune -f
+
+          echo "🔹 Running the new container..."
+          sudo docker run -d --restart unless-stopped --name my-app -p 5000:5000 \$IMAGE
+
+          echo "Deployment complete!"
+
+          echo "🔹 Checking if the container is running..."
+          if sudo docker ps | grep -q "my-app"; then
+            echo "The app is running successfully!"
+          else
+            echo "The app failed to start!"
+            exit 1
+          fi
+        EOF
 
 ```
 
