@@ -156,6 +156,14 @@ In the AWS Management Console, head to the Amazon EC2 dashboard and verify that 
 
 
 ## Step 4: Lets Push Code to Trigger GitHub Actions
+
+
+
+
+
+
+
+
 4.1.This action will trigger GitHub Actions to create ecr , build, push, and deploy the latest container to EC2.
 
 ```language
@@ -168,6 +176,10 @@ git push origin main
 
 
 4.2.Now github actions will build, push, and deploy the latest container to EC2.
+
+## lets Set up CI/CD Workflow (GitHub Actions)
+
+
 
 
 ## Step 5: Testing
