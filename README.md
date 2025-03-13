@@ -1,4 +1,4 @@
-## GitHubActions AutoDeploy: Dockerized App Deployment on AWS EC2
+## Zero-Downtime Deployment: Automating AWS EC2 with Docker, GitHub Actions & Terraform
 
 
 ## Technical Architecture
