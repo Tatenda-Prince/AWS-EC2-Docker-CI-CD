@@ -157,14 +157,43 @@ In the AWS Management Console, head to the Amazon EC2 dashboard and verify that 
 
 ## Step 4: Lets Push Code to Trigger GitHub Actions
 
+4.1.This GitHub Actions workflow automates the process of building a Docker image, pushing it to AWS Elastic Container Registry (ECR), and deploying it to an Amazon EC2 instance:
+
+1.The workflow is triggered whenever code is pushed to the `master` branch.
+
+2.Builds a new Docker image from the updated code.
+
+3.Pushes the image to AWS ECR
+
+4.Deploys the updated container on EC2, replacing the old one.
+
+GitHub Actions Workflow:
+
+```language
 
 
 
+```
 
 
 
+4.2.Manage Secrets in GitHub:
 
-4.1.This action will trigger GitHub Actions to create ecr , build, push, and deploy the latest container to EC2.
+1.Environment Variables:
+
+The `env` section within the steps that require AWS credentials pulls the values from the secrets stored in the GitHub repository.
+
+2.Navigate to Your Repository on GitHub
+
+3.Add Secrets `Settings > Secrets and variables > Actions`.
+
+4.Add the following secrets:
+
+![image_alt]()
+
+
+
+4.3.This action will trigger GitHub Actions to create ecr , build, push, and deploy the latest container to EC2.
 
 ```language
 git add .
@@ -175,10 +204,7 @@ git push origin main
 ![image_alt](https://github.com/Tatenda-Prince/aws-ec2-docker-ci-cd/blob/ae40b2fa2629a8603b7d0bbb8cc0bd14328b8658/img/Screenshot%202025-03-02%20094857.png)
 
 
-4.2.Now github actions will build, push, and deploy the latest container to EC2.
-
-## lets Set up CI/CD Workflow (GitHub Actions)
-
+4.5.Now github actions will build, push, and deploy the latest container to EC2.
 
 
 
