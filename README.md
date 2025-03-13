@@ -77,7 +77,7 @@ You work at the Up The Chelsea start-up as a DevOps Engineer you are tasked with
 git clone https://github.com/Tatenda-Prince/aws-ec2-docker-ci-cd.git
 ```
 
-## Deploy The Application
+##  Build & Push Docker Image to Amazon ECR
 
 Before Terraform provisons AWS resources we need to push your application Docker image to ECR:
 
