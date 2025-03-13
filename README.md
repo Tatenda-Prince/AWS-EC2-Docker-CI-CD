@@ -61,6 +61,7 @@ By integrating Terraform, we ensure a repeatable, scalable, and infrastructure-a
 You work at the Up The Chelsea start-up as a DevOps Engineer you are tasked with automation and deployement of a web app to reduce downtime and improving application reliability to their customers by leveraging GitHub Actions, Docker, EC2 and Terraform. 
 
 ## Prerequisites
+
 1.Git & GitHub Account
 
 2.AWS Account with configured IAM roles, EC2, and ECR
@@ -75,6 +76,27 @@ You work at the Up The Chelsea start-up as a DevOps Engineer you are tasked with
 ```language
 git clone https://github.com/Tatenda-Prince/aws-ec2-docker-ci-cd.git
 ```
+
+## Deploy The Application
+
+Before Terraform provisons AWS resources we need to push your application Docker image to ECR:
+
+```language
+aws ecr create-repository --repository-name your-repository-name
+
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <YOUR ACCOUNT ID>.dkr.ecr.us-east-1.amazonaws.com
+
+docker build -t my-flask-app .
+
+docker tag my-node-app:latest <ECR_URI>:latest
+
+docker push <ECR_URI>:latest
+
+```
+
+![image_alt]()
+
+
 
 ## Step 2 : Run Terraform workflow to initialize, validate, plan then apply
 2.1.We are going to deploy amazon EC2 instance with security groups and with IAM Role using terraform.
